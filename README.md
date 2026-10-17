@@ -1,139 +1,121 @@
 # Azure Databases Desk
 
-Browse **Azure SQL databases** from the Omarchy bar. Cosmos DB and PostgreSQL tabs are visible but temporarily disabled.
+An Omarchy bar plugin for browsing **Azure SQL** databases, checking live state and public access, and viewing posted month-to-date costs. Switch between remembered Azure accounts and Microsoft Entra directories without changing your terminal's account when using an added profile.
 
-![Azure Databases Desk with fictional Azure SQL resources](preview.png)
+![Azure Databases Desk showing fictional Azure SQL resources](preview.png)
 
-- Azure SQL browsing with fresh pages of **25 resources**; other service tabs are disabled.
-- Header actions: **Create database** opens the Azure Portal SQL creation form; **Cost Calculator** is disabled with a Coming soon tooltip. Disabled service tabs show the same tooltip.
-- Multi-select subscriptions, servers/accounts, locations, service tiers/APIs and compute models. Empty selections mean All.
-- Name search and sorting by name, month-to-date cost, location, tier or state.
-- Searchable multiselect filters for backup redundancy, reported restore history, maintenance window, zone redundancy and read scale-out.
-- Remember multiple Azure sign-ins and switch accounts or Microsoft Entra directories from searchable selectors. Added accounts use independent Azure CLI profiles; the last selection is restored.
-- Saved views retain the service, filters and sort order. Mark a view as default to load whenever the panel opens; opening always resets to page one.
-- Current-page state, public-access settings and metrics refresh immediately and every ten minutes while the panel is open. Closing it cancels requests and stops polling.
-- Expand a row to refresh its state and public-access setting, then read backup/restore, availability, failover and maintenance information. The small refresh icon refreshes that row and its operational details.
-- Prominent public-network warning only when the setting is Enabled. Unknown settings are never inferred to be disabled.
-- Portal links and an optional DB Studio workbench shortcut for SQL and PostgreSQL.
-- No persistent resource or cost cache. Saved views, remembered account metadata and Azure CLI profiles are stored locally.
+**Version:** 0.7.1 · **Plugin ID:** `dimitrije.azure-sql` · **License:** [MIT](LICENSE)
 
-## Setup
+## Features
 
-Requires Omarchy Quattro/Quickshell, Python 3.10+, and Azure CLI. The panel provides **Install Azure CLI** when missing, and **Sign in to Azure** when signed out. Authenticated users do not see the sign-in action. Azure CLI owns credentials and token refresh; the plugin does not store or expose access tokens.
+- Fresh pages of **25 databases**, searchable filters and sorting by name, cost, location, tier or state.
+- Current-page ARM state and metrics, refreshed on opening and every 10 minutes; configurable up to 60 minutes. Closing the panel cancels work.
+- A prominent warning when the server's public-network setting is Enabled. Unknown settings remain unknown.
+- Posted **month-to-date actual costs**, with currency checks and explicit handling of unavailable costs and shared pools.
+- Backup/restore, failover-group, maintenance and availability details on expansion, plus an explicit row refresh.
+- Searchable multiselect filters for subscription, server, region, service tier, compute, backup redundancy, restore history, maintenance, zone redundancy and read scale-out.
+- Saved views and a default view; remembered accounts with a separate directory selector.
+- Azure Portal shortcuts and an optional shortcut to an already-installed DB Studio workbench.
+
+**Azure SQL is the enabled service.** Cosmos DB, PostgreSQL and Cost Calculator are disabled and marked Coming soon. No resource changes, restores, failovers or SQL queries are executed by this plugin.
+
+## Requirements
+
+| Dependency | Purpose |
+| --- | --- |
+| Omarchy Quattro with its bar-widget/plugin API | Host shell and plugin management |
+| Quickshell, Qt Quick/Controls and Omarchy shell QML modules | Panel rendering; supplied by the desktop |
+| Python 3.10+ | Standard-library helper, preferences and Azure CLI subprocesses; no pip packages |
+| Azure CLI (`az`) | Azure sign-in and management API reads |
+| Bash and normal Omarchy desktop tools | Explicit setup terminal, browser launch and plugin IPC |
+| DB Studio and its own dependencies, optional | Separate SQL workbench; installed and configured independently |
+| `notify-send`, optional | Notification when the optional workbench is unavailable |
+
+The Azure identity needs read access to Resource Graph and SQL resources, Monitor metrics access for charts, and Cost Management access for billing. Missing optional permissions are reported; the panel does not invent healthy states or available costs. Reading backup/failover settings can require additional ARM read permissions. Accounts with no accessible subscriptions have an empty resource view.
+
+## Install
+
+Review the source and [security policy](SECURITY.md), then install the repository:
+
+```bash
+omarchy plugin add https://github.com/dimitrijemaric/omarchy-azure-sql.git --enable
+```
+
+The repository contains one self-contained plugin with a root `manifest.json`. Installation has no setup hooks and does not install packages or change Azure resources. Enabling adds the widget to the right side of the bar.
+
+Open the database icon in the bar. If Azure CLI is missing, choose **Install Azure CLI**; this opens a terminal and explicitly invokes `omarchy pkg add azure-cli`. Omarchy's package manager may request your password. Choose **Sign in to Azure** and complete Microsoft's browser/MFA flow. These terminal commands provide the same setup:
 
 ```bash
 bash scripts/setup.sh install
 bash scripts/setup.sh login
 ```
 
-The identity needs Resource Graph and ARM read permissions for the resources, Azure Monitor metric-read permission, and Cost Management access for billing values. Individual metric, cost or operational-detail failures remain visible without inventing zero values or healthy states. Resource Graph metadata can lag Azure changes; current-page ARM reads obtain current state.
+Azure CLI owns sign-in credentials and token refresh. The plugin never asks for an Azure password.
 
-## Install
+## Use
 
-Install from GitHub:
+- Open **Accounts ▾** in the header to reveal Account and Directory. The **+** beside Account adds a separate sign-in; **+** beside Directory signs the selected account into another tenant. Both selectors are searchable. They collapse when the panel closes.
+- Choose filters on the right; **All** clears a filter category. Advanced filters contain backup, maintenance and availability options. Database-name search and **Save view** sit below Sort by.
+- Name a new view and optionally make it default. Loaded views offer explicit Update or Save as new. The default loads on page one whenever the panel opens.
+- Expand a database to refresh its state and network setting, then read operational details. Use its small refresh icon for another read. **Ctrl R** refreshes the page and filter options.
+- Use Previous/Next or the page-number field. Normal browsing fetches only that page's costs. Global cost sorting builds a bounded ranking in panel memory; page navigation reuses it. Reopen, filter changes, month changes and explicit refresh discard the ranking.
 
-```bash
-omarchy plugin add https://github.com/dimitrijemaric/omarchy-azure-sql --enable
-```
-
-Or install from a local checkout:
-
-```bash
-omarchy plugin validate .
-plugin_dir="$HOME/.config/omarchy/plugins/dimitrije.azure-sql"
-mkdir -p "$plugin_dir/scripts"
-cp *.qml Model.js manifest.json LICENSE README.md "$plugin_dir/"
-cp scripts/*.py scripts/*.sh "$plugin_dir/scripts/"
-omarchy plugin enable dimitrije.azure-sql
-```
-
-The plugin ID remains `dimitrije.azure-sql` to preserve an existing installation and its saved views. Its displayed name is **Azure Databases Desk**.
-
-## Accounts and directories
-
-Click **Accounts ▾** in the header to show the **Account** and **Directory** selectors above the service tabs. They start hidden whenever the panel opens; click Accounts again to collapse them. Account chooses a remembered sign-in; Directory chooses a Microsoft Entra tenant for that sign-in. Guest access uses the same account with a different directory. Subscription filters below are limited to the selected directory, preventing cross-tenant Resource Graph queries.
-
-- The **+** beside Account opens a dialog with an optional tenant ID and cloud selection. Continue opens terminal/browser sign-in; choose the other Microsoft account there. A successful sign-in is remembered and selected automatically. Cancelling keeps the previous selection.
-- Choose an account from the searchable list to reuse its CLI session and last directory. Azure may require sign-in again when its session expires.
-- Choose a directory to reuse the same account there. Directory names include a short tenant ID to distinguish organizations with similar names; full tenant IDs are searchable. The **+** next to Directory signs the selected account into another tenant by UUID. If a discovered directory has no cached sign-in, select it and use **Sign in to Azure**.
-- Switching accounts/directories cancels previous reads, clears database/cost data and subscription/server filters, then fetches a fresh first page. Backend requests also validate subscription scope against that profile and tenant. The last account and each account's last directory survive panel reopen and shell restart.
-
-**Azure CLI account** uses the existing terminal CLI profile (`AZURE_CONFIG_DIR`, default `~/.azure`) for compatibility. Added accounts each use a separate CLI configuration under `${XDG_STATE_HOME:-~/.local/state}/azure-sql-desk/azure-profiles/<profile-id>/`. Switching an added account does not change the terminal's default account or subscription. Terminal sign-ins can change the shared CLI entry. Reauthenticating an added profile must use its remembered account; use **+** beside Account for another identity. Passwords and access tokens never enter QML or the preferences database; Azure CLI owns the credential files in its profiles. Added profile directories are mode 0700 and CLI files are created with a restrictive umask. Metadata and selections live in `accounts.sqlite3` (0600). Keep this state directory private; removing it signs the plugin's added profiles out locally and removes remembered choices.
-
-These flows use documented [Azure CLI configuration directories](https://learn.microsoft.com/en-us/cli/azure/azure-cli-configuration?view=azure-cli-latest) and [interactive tenant sign-in](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-interactively?view=azure-cli-latest#sign-in-to-a-specific-tenant). Microsoft controls MFA, consent and session expiry. No password login is implemented.
-
-## Browsing and default views
-
-Select any combination of subscription, server/account, location, tier/API and compute-model filters. Every dropdown is searchable, including Sort by and Saved views. Open a dropdown and type, or focus it and start typing. Multiselect dropdowns stay open while you check choices and apply the combined selection when you close them; name/sort changes are debounced. Use Up/Down to navigate choices, Space or Enter to toggle, and Tab then Enter on Done to apply. Select All to clear that category's selections. Changing subscriptions removes server selections outside the new scope; unavailable restored selections are labeled and can be cleared. Reset clears filters and sorting. Azure SQL offers all six [service tiers and both compute models](https://learn.microsoft.com/en-us/azure/azure-sql/database/purchasing-models?view=azuresql), even when your inventory has no matches. Locations come from Microsoft.Sql server provider metadata for the signed-in Azure cloud, merged with discovered regions. Subscription and server lists contain accessible resources, including empty SQL servers. Region choices describe service support; subscription restrictions and tier/compute compatibility can still limit deployment. Cosmos is shown at account level and PostgreSQL at flexible-server level, where management, billing and high-availability settings exist; internal databases/containers and query data are not enumerated.
-
-Expand **Advanced filters** for Backup & restore, Maintenance and Availability. The collapsed heading shows how many advanced selections are active. Backup redundancy offers Local, Zone, Geo and Geo-zone storage. Restore history buckets the time since Azure's earliest reported restore point: under one day, 1–7 days, 7–14 days and 14+ days. This describes reported recovery history, not the configured retention policy or a guarantee that a restore will succeed. Maintenance offers system default, weekday, weekend and other configured windows; missing metadata stays Not reported. Zone redundancy and read scale-out offer Enabled, Disabled and Unknown. All these selections are saved with the view.
-
-Operational filtering runs in Resource Graph across the selected scope before the 25-row page is returned, including cost sorting. Database and elastic-pool metadata are joined to inherit pool maintenance and zone settings. No individual backup-policy/failover calls are added for off-page databases. Resource Graph can lag ARM and omit properties; absent values match Unknown/Not reported. Exact PITR/LTR retention and failover-group details remain expansion-only reads. Standard SQL public maintenance configuration suffixes `_DB_1` and `_DB_2` are classified as weekday and weekend; unrecognized configurations stay Other.
-
-Sort by has its own section above Filters. Save view sits directly below the database-name filter, followed by the Saved views section. The left list fills the available height. Use Previous, Next or enter a page number. Name, location, tier and state sorting is applied by Azure Resource Graph before the 25-row page is returned. The default built-in view uses Name A–Z for bounded first-page resource reads. Cost sorting additionally reads a lightweight matching resource-ID index and fresh billing aggregates to rank the whole scope correctly before returning its selected 25 resources; large inventories make cost sorting slower. The resulting ID/cost ranking stays only in the open panel's memory: subsequent pages fetch fresh metadata for their 25 IDs without repeating discovery or billing. Closing/reopening the panel, changing filters, changing the billing month, or explicitly refreshing discards it. Cost sorting supports up to 100,000 matches; larger scopes must be narrowed. Empty matches make no billing request; up to 100 matches use resource-ID billing filters.
-
-Click **Save view** directly below the name filter. A new view requires a unique name. Editing a loaded view retains its identity and default setting; the dialog offers **Update** or **Save as new**. Save as new requires a different name. Duplicate names never silently overwrite another view. Check **Make default view** in the naming dialog to save the view and default preference together. Alternatively, load a saved view and click **Make default** beside **Delete view**; the button shows **✓ Default** for the current default. Unchecking the option while saving the existing default clears that preference. The default contains the service tab, multi-select filters, name filter and sort order. While Cosmos DB and PostgreSQL are disabled, their saved views are preserved but unavailable in view selectors; a default for either service falls back to the built-in Azure SQL view. Paging always starts at 25 rows on page one. Deleting the default view restores the built-in default.
-
-`Ctrl R` refreshes the current page and available filter options. The header refresh icon does the same. Azure login/setup reopens the panel with its default view.
-
-## Live monitoring
-
-Only the current 25 resources receive ARM GETs and metric reads. Metadata reads run with at most three Azure CLI processes at once. SQL parent-server access settings are read once per distinct parent in the page. Metrics use Azure Monitor's regional [batch API](https://learn.microsoft.com/en-us/rest/api/monitor/metrics-batch/batch?view=rest-monitor-2023-10-01), grouped by subscription and location.
-
-| Service | Displayed live metrics |
-| --- | --- |
-| Azure SQL | CPU, physical data reads, log writes; paused databases skip metric reads |
-| Cosmos DB | Maximum normalized RU consumption |
-| PostgreSQL flexible server | CPU, memory and storage percentages |
-
-Metric samples use one-minute granularity over the last 15 minutes and can lag collection. No SQL or document-data connection is opened. Periodic refresh updates current-page ARM state and metrics; it does not enumerate other pages or repeat billing queries. Backup/restore and failover details are read on expansion or explicit row refresh. Rate-limit responses (429/529) use separate resource, metric, billing and discovery cooldowns with a 15, 30, then 60-minute backoff, or longer when the CLI exposes a Retry-After delay. Undispatched work stops when its service is throttled. A billing or metrics cooldown never suppresses ARM public-access checks. Manual actions also honor the affected cooldown; other services remain available. Billing queries are not retried automatically. These measures reduce API traffic; shared Azure quotas can still cause throttling.
-
-The current regional batch endpoint implementation targets Azure public cloud. Portal shortcuts also recognize Azure Government and China; these environments need their regional metrics endpoints adapted before batch monitoring there. Use subscriptions within one Azure tenant for a single Resource Graph selection; cross-tenant discovery requires an appropriate delegated Azure scope.
-
-Set the visible-page interval (600–3600 seconds; older shorter settings are clamped to ten minutes):
+Azure services have independent cooldowns after rate limits; a billing or metrics cooldown does not suppress ARM public-access checks. The minimum automatic refresh interval is ten minutes:
 
 ```bash
 omarchy bar set dimitrije.azure-sql liveRefreshIntervalSec 600 --json
 ```
 
-## Costs
+See [the detailed usage guide](docs/USAGE.md) for filtering semantics, account isolation, costs and live monitoring, and [resource data](docs/RESOURCE_DATA.md) for API coverage.
 
-Fresh [Cost Management queries](https://learn.microsoft.com/en-us/rest/api/cost-management/query/usage?view=rest-cost-management-2025-03-01) use ActualCost, MonthToDate and ResourceId grouping. Normal paging requests billing for the current page only. Cost sorting reads resource-scoped costs for up to 100 matches; broader rankings read the selected service's aggregates once per matching subscription. Page navigation reuses the in-memory ordering until the ranking is discarded as described above. No billing response is persisted. Costs are delayed posted charges, not forecasts or an instantaneous meter. Currency comes from Azure; sorting across different billing currencies is rejected. Unknown values sort last. Shared elastic-pool compute is not allocated arbitrarily to its member databases; their values include only directly billed resource charges.
+## Security and local data
 
-## Operational details
+The plugin runs **unsandboxed** in `omarchy-shell`, starts Python/Azure CLI helpers and contacts Azure management, identity, monitoring and billing services. Portal actions open Microsoft Azure Portal. It has no independent analytics endpoint. No sudoers rule, background service or scheduler is installed. See [SECURITY.md](SECURITY.md) for command, network and credential boundaries.
 
-See [the resource-data analysis](docs/RESOURCE_DATA.md) for the implemented fields, permissions, endpoint references, and useful further additions. All actions are read-only: this panel does not restore, initiate failover, change backup retention or schedule maintenance.
+Resource and billing data are not persisted. Saved views, account metadata and added Azure CLI profiles live under `${XDG_STATE_HOME:-~/.local/state}/azure-sql-desk/`. Preferences use SQLite files with mode 0600. Added credential-profile directories use mode 0700; Azure CLI manages their contents. The shared CLI account uses `AZURE_CONFIG_DIR` or `~/.azure`. Treat credential profiles as sensitive local data.
 
-## Local preferences and removal
+The preview contains fictional resources, not a real Azure account. The optional workbench shortcut passes no credentials and runs no query; DB Studio is independent software.
 
-Saved views and the default preference live in `${XDG_STATE_HOME:-~/.local/state}/azure-sql-desk/views.sqlite3`, mode 0600, with a separate demo file. Existing single-select views are migrated on read. This is preference storage, not a resource cache. Azure CLI maintains the shared profile and the isolated credential profiles described under Accounts and directories. Remembered account metadata is in `accounts.sqlite3`; it contains account names, tenant IDs and profile choices, never token values.
+## Update and remove
 
-Version 0.6 removes the previous catalog cache. When upgrading manually, remove `catalog-v1.sqlite3` and its journal/WAL sidecars from `${XDG_CACHE_HOME:-~/.cache}/azure-sql-desk/` after stopping the old shell instance. Preserve the state directory to keep saved views.
+Review upstream changes before updating:
 
 ```bash
+omarchy plugin update dimitrije.azure-sql
+```
+
+Disable temporarily or remove the plugin:
+
+```bash
+omarchy plugin disable dimitrije.azure-sql
 omarchy plugin remove dimitrije.azure-sql
 ```
 
-## Simulation and optional query client
+Removal stops the plugin and removes its checkout/bar registration. It preserves saved views, remembered accounts, added CLI credential profiles and the shared CLI login. To remove local plugin data as well, close the panel and deliberately delete the `azure-sql-desk` state directory after checking its contents; that also deletes saved views and added credential profiles. Do not delete `~/.azure` to remove this plugin. Azure CLI, DB Studio and their packages are independently managed and remain installed.
+
+## Limitations
+
+- Metrics batching currently targets Azure public cloud. Government/China portal and sign-in choices exist, but their regional metrics endpoints are not yet implemented.
+- Resource Graph and posted Azure costs can lag current resource state. Shared elastic-pool compute is not allocated across databases. Unknown costs sort last; mixed billing currencies cannot be globally sorted.
+- Broad cost sorting requires discovery of matching IDs and billing aggregates and supports up to 100,000 matches. It can be slower than normal page browsing.
+- A public-access warning describes Azure's endpoint setting; firewall rules and authentication still apply. Absence of a warning is not a network-security audit.
+- Automated checks use fixtures. Live large-tenant latency, tenant quotas and every permission combination have not been validated.
+
+## Development and release
 
 ```bash
-python3 scripts/simulate.py
-```
-
-Opens a separate fictional Azure SQL panel with a public-enabled resource expanded. Cosmos DB and PostgreSQL remain disabled. It uses temporary preferences and makes no Azure requests. Closing it exits the simulation. Live mode is selected with the widget setting `demoMode false`.
-
-The query icon opens [DB Studio](https://github.com/Andean-Bridge/omarchy-db-browser) if separately installed. It supports SQL username/password connections to Azure SQL and PostgreSQL connections. It has no selected-resource deep link, so choose/create the connection in its workbench. The icon does not install software or execute a query. Its explicit installer is `bash scripts/query_client.sh install`.
-
-## Development
-
-Run the current offline regression suites:
-
-```bash
+python3 -B scripts/check_release.py
 python3 -B -m unittest discover -s tests
-python3 -B scripts/qml_check.py
 omarchy plugin validate .
+python3 -B scripts/qml_check.py
 ```
 
-The Python tests cover the current helper protocol, pagination, cost scoping/ranking, throttled dispatch, cancellation, failover continuations, operational filters and view persistence. QML checks use the actual controller and controls with an offline CLI fixture: 20,002 databases, 25-row pages, expansion, keyboard navigation, dark/light controls, compact layout, views, remembered account/directory switching, cancelled sign-ins, and billing-independent security checks. Before publication, also exercise multiple subscriptions and regions, denied metric/billing access and cost-order boundaries on representative live Azure scopes. See [release checks](docs/RELEASE.md).
+The native QML checks require an Omarchy desktop with QtTest. GitHub CI runs portable preflight, shell syntax and offline Python checks. To open a fictional demo that uses temporary preferences and makes no Azure calls:
 
-MIT. See [LICENSE](LICENSE).
+```bash
+python3 -B scripts/simulate.py
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [release checks](docs/RELEASE.md), and [CHANGELOG.md](CHANGELOG.md). Report ordinary bugs through [GitHub Issues](https://github.com/dimitrijemaric/omarchy-azure-sql/issues); use private reporting for vulnerabilities.
+
+Copyright © 2026 Dimitrije Maric. Released under the [MIT license](LICENSE). Omarchy, Azure CLI, Qt/Quickshell and DB Studio retain their own licenses and trademarks. This project is not affiliated with Microsoft or Omarchy.

@@ -1,4 +1,4 @@
-# Release checks — 0.7.0
+# Release checks — 0.7.1
 
 - Validate the plugin manifest and inspect the native popup on a laptop and an external monitor.
 - Open the panel repeatedly: default view, service tab, first page and exactly 25 rows must reset correctly and come from fresh reads.

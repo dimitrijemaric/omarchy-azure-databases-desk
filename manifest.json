@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "dimitrije.azure-sql",
   "name": "Azure Databases Desk",
-  "version": "0.7.0",
-  "author": "Dimitrije",
+  "version": "0.7.1",
+  "author": "Dimitrije Maric",
   "license": "MIT",
-  "description": "Azure SQL with fresh pages, live metrics, costs, operational details and an Azure Portal creation shortcut.",
+  "description": "Browse Azure SQL with live metrics, month-to-date costs, public-access warnings, saved views and account switching.",
   "kinds": [
     "bar-widget"
   ],
