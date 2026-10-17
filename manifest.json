@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "dimitrije.azure-sql",
+  "name": "Azure Databases Desk",
+  "version": "0.7.0",
+  "author": "Dimitrije",
+  "license": "MIT",
+  "description": "Azure SQL with fresh pages, live metrics, costs, operational details and an Azure Portal creation shortcut.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Azure Databases Desk",
+    "description": "Live Azure database resources and saved default views.",
+    "category": "Developer Tools",
+    "defaultSection": "right",
+    "allowMultiple": false,
+    "defaults": {
+      "demoMode": false,
+      "liveRefreshIntervalSec": 600
+    },
+    "schema": [
+      {
+        "key": "liveRefreshIntervalSec",
+        "type": "integer",
+        "label": "Visible-page refresh interval (seconds)",
+        "min": 600,
+        "max": 3600,
+        "step": 60,
+        "defaultValue": 600
+      },
+      {
+        "key": "demoMode",
+        "type": "boolean",
+        "label": "Fictional resources",
+        "defaultValue": false
+      }
+    ]
+  }
+}
