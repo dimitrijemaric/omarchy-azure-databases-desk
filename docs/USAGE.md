@@ -33,21 +33,21 @@ The identity needs Resource Graph and ARM read permissions for the resources, Az
 Install from GitHub:
 
 ```bash
-omarchy plugin add https://github.com/dimitrijemaric/omarchy-azure-sql --enable
+omarchy plugin add https://github.com/dimitrijemaric/omarchy-azure-databases-desk --enable
 ```
 
 Or install from a local checkout:
 
 ```bash
 omarchy plugin validate .
-plugin_dir="$HOME/.config/omarchy/plugins/dimitrije.azure-sql"
+plugin_dir="$HOME/.config/omarchy/plugins/azure-databases-desk"
 mkdir -p "$plugin_dir/scripts"
 cp *.qml Model.js manifest.json LICENSE README.md "$plugin_dir/"
 cp scripts/*.py scripts/*.sh "$plugin_dir/scripts/"
-omarchy plugin enable dimitrije.azure-sql
+omarchy plugin enable azure-databases-desk
 ```
 
-The plugin ID remains `dimitrije.azure-sql` to preserve an existing installation and its saved views. Its displayed name is **Azure Databases Desk**.
+The plugin ID is `azure-databases-desk`. The historical local state directory is retained so existing saved views and logins remain available. Its displayed name is **Azure Databases Desk**.
 
 ## Accounts and directories
 
@@ -93,7 +93,7 @@ The current regional batch endpoint implementation targets Azure public cloud. P
 Set the visible-page interval (600–3600 seconds; older shorter settings are clamped to ten minutes):
 
 ```bash
-omarchy bar set dimitrije.azure-sql liveRefreshIntervalSec 600 --json
+omarchy bar set azure-databases-desk liveRefreshIntervalSec 600 --json
 ```
 
 ## Costs
@@ -111,7 +111,7 @@ Saved views and the default preference live in `${XDG_STATE_HOME:-~/.local/state
 Version 0.6 removes the previous catalog cache. When upgrading manually, remove `catalog-v1.sqlite3` and its journal/WAL sidecars from `${XDG_CACHE_HOME:-~/.cache}/azure-sql-desk/` after stopping the old shell instance. Preserve the state directory to keep saved views.
 
 ```bash
-omarchy plugin remove dimitrije.azure-sql
+omarchy plugin remove azure-databases-desk
 ```
 
 ## Simulation and optional query client

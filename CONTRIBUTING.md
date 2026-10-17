@@ -23,7 +23,7 @@ All automated tests use local fixtures and temporary state. QML checks render re
 
 ## Pull requests and releases
 
-Describe the user-visible change and relevant verification. Preserve the plugin ID `dimitrije.azure-sql`, keep entry points at safe repository-relative paths, and do not add install hooks, automatic package installation or resource-changing Azure operations. Document new commands, network access and storage in the README and security policy.
+Describe the user-visible change and relevant verification. Preserve the plugin ID `azure-databases-desk`, keep entry points at safe repository-relative paths, and do not add install hooks, automatic package installation or resource-changing Azure operations. Document new commands, network access and storage in the README and security policy.
 
 Update the manifest version and changelog for a release, validate the repository, and publish a GitHub tag/release matching the manifest. Marketplace review is tied to an exact commit; do not silently change a submitted snapshot. Use the marketplace's documented update/verification workflow for later listed releases.
 

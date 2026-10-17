@@ -55,7 +55,7 @@ if sys.argv[1:4] == ['pkg', 'add', 'azure-cli']:
         self.assertIn(["omarchy", "pkg", "add", "azure-cli"], self.calls())
         self.assertIn(["az", "version", "--only-show-errors"], self.calls())
         self.assertFalse(any(call[:2] == ["az", "login"] for call in self.calls()))
-        self.assertIn(["omarchy", "bar", "set", "dimitrije.azure-sql", "demoMode", "false", "--json"], self.calls())
+        self.assertIn(["omarchy", "bar", "set", "azure-databases-desk", "demoMode", "false", "--json"], self.calls())
 
     def test_existing_cli_skips_package_installation(self):
         self.existing_cli()
@@ -72,7 +72,7 @@ if sys.argv[1:4] == ['pkg', 'add', 'azure-cli']:
         self.existing_cli()
         self.assertEqual(self.run_setup("login").returncode, 0)
         self.assertIn(["az", "login", "--allow-no-subscriptions", "--only-show-errors", "--output", "none"], self.calls())
-        self.assertIn(["omarchy-shell", "-q", "shell", "summon", "dimitrije.azure-sql"], self.calls())
+        self.assertIn(["omarchy-shell", "-q", "shell", "summon", "azure-databases-desk"], self.calls())
 
     def test_failed_login_does_not_report_success_or_refresh(self):
         self.existing_cli()

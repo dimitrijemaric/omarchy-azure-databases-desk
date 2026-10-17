@@ -3,10 +3,10 @@ import QtQuick.Window
 import QtQuick.Controls as Controls
 import Quickshell
 import qs.Commons
-import "AzureSql" as AzureSql
+import "AzureDesk" as AzureDesk
 
 ShellRoot {
-  AzureSql.Controller { id: backend; settings: ({demoMode: true, pageSize: 25}) }
+  AzureDesk.Controller { id: backend; settings: ({demoMode: true, pageSize: 25}) }
 
   Component.onCompleted: {
     backend.panelOpened();
@@ -29,7 +29,7 @@ ShellRoot {
       contentWidth: width; contentHeight: panel.implicitHeight
       clip: true; boundsBehavior: Flickable.StopAtBounds
       Controls.ScrollBar.vertical: Controls.ScrollBar {}
-      AzureSql.PanelContent {
+      AzureDesk.PanelContent {
         id: panel
         width: parent.width
         controller: backend

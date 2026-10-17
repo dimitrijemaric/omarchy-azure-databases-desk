@@ -5,7 +5,7 @@ import qs.Ui
 
 Panel {
   id: root
-  moduleName: "dimitrije.azure-sql"
+  moduleName: "azure-databases-desk"
   manageIpc: false
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
@@ -75,7 +75,7 @@ Panel {
       onSetupRequested: function(action) { if (action === "login") root.startAccountLogin(azure.profileId,azure.tenantId,"AzureCloud"); else root.startSetup(action); }
       onAccountLoginRequested: function(profile,tenant,cloud) { root.startAccountLogin(profile,tenant,cloud); }
       onQueryClientRequested: root.openQueryClient()
-      onLiveModeRequested: Quickshell.execDetached(["omarchy", "bar", "set", "dimitrije.azure-sql", "demoMode", "false", "--json"])
+      onLiveModeRequested: Quickshell.execDetached(["omarchy", "bar", "set", "azure-databases-desk", "demoMode", "false", "--json"])
     }
   }
 }

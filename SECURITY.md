@@ -2,7 +2,7 @@
 
 ## Report a vulnerability
 
-Use [GitHub private vulnerability reporting](https://github.com/dimitrijemaric/omarchy-azure-sql/security/advisories/new) when available. If private reporting is unavailable, open an issue requesting a private contact channel without including vulnerability details. Do not publish passwords, access tokens, Azure identifiers, billing data, query results, or personal information in issues or screenshots.
+Use [GitHub private vulnerability reporting](https://github.com/dimitrijemaric/omarchy-azure-databases-desk/security/advisories/new) when available. If private reporting is unavailable, open an issue requesting a private contact channel without including vulnerability details. Do not publish passwords, access tokens, Azure identifiers, billing data, query results, or personal information in issues or screenshots.
 
 ## Runtime access
 

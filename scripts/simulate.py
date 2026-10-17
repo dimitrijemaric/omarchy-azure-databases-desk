@@ -15,7 +15,7 @@ def main():
         directory = Path(temporary)
         for name in ("Commons", "Ui"):
             (directory / name).symlink_to(shell / name, target_is_directory=True)
-        (directory / "AzureSql").symlink_to(root, target_is_directory=True)
+        (directory / "AzureDesk").symlink_to(root, target_is_directory=True)
         shutil.copyfile(root / "scripts/Simulation.qml", directory / "shell.qml")
         env = dict(os.environ, XDG_CACHE_HOME=str(directory / "cache"),
                    XDG_STATE_HOME=str(directory / "state"), PYTHONDONTWRITEBYTECODE="1")

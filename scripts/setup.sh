@@ -57,6 +57,6 @@ fi
 
 # Keep package installation usable before the plugin is installed too.
 # With a live shell these calls leave demo mode and refresh the open panel.
-omarchy bar set dimitrije.azure-sql demoMode false --json >/dev/null 2>&1 || true
-omarchy-shell -q shell summon dimitrije.azure-sql >/dev/null 2>&1 || true
+omarchy bar set azure-databases-desk demoMode false --json >/dev/null 2>&1 || true
+omarchy-shell -q shell summon azure-databases-desk >/dev/null 2>&1 || true
 finish 0

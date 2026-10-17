@@ -4,7 +4,7 @@ An Omarchy bar plugin for browsing **Azure SQL** databases, checking live state 
 
 ![Azure Databases Desk showing fictional Azure SQL resources](preview.png)
 
-**Version:** 0.7.1 · **Plugin ID:** `dimitrije.azure-sql` · **License:** [MIT](LICENSE)
+**Version:** 0.8.0 · **Plugin ID:** `azure-databases-desk` · **License:** [MIT](LICENSE)
 
 ## Features
 
@@ -38,7 +38,7 @@ The Azure identity needs read access to Resource Graph and SQL resources, Monito
 Review the source and [security policy](SECURITY.md), then install the repository:
 
 ```bash
-omarchy plugin add https://github.com/dimitrijemaric/omarchy-azure-sql.git --enable
+omarchy plugin add https://github.com/dimitrijemaric/omarchy-azure-databases-desk.git --enable
 ```
 
 The repository contains one self-contained plugin with a root `manifest.json`. Installation has no setup hooks and does not install packages or change Azure resources. Enabling adds the widget to the right side of the bar.
@@ -63,7 +63,7 @@ Azure CLI owns sign-in credentials and token refresh. The plugin never asks for 
 Azure services have independent cooldowns after rate limits; a billing or metrics cooldown does not suppress ARM public-access checks. The minimum automatic refresh interval is ten minutes:
 
 ```bash
-omarchy bar set dimitrije.azure-sql liveRefreshIntervalSec 600 --json
+omarchy bar set azure-databases-desk liveRefreshIntervalSec 600 --json
 ```
 
 See [the detailed usage guide](docs/USAGE.md) for filtering semantics, account isolation, costs and live monitoring, and [resource data](docs/RESOURCE_DATA.md) for API coverage.
@@ -81,14 +81,14 @@ The preview contains fictional resources, not a real Azure account. The optional
 Review upstream changes before updating:
 
 ```bash
-omarchy plugin update dimitrije.azure-sql
+omarchy plugin update azure-databases-desk
 ```
 
 Disable temporarily or remove the plugin:
 
 ```bash
-omarchy plugin disable dimitrije.azure-sql
-omarchy plugin remove dimitrije.azure-sql
+omarchy plugin disable azure-databases-desk
+omarchy plugin remove azure-databases-desk
 ```
 
 Removal stops the plugin and removes its checkout/bar registration. It preserves saved views, remembered accounts, added CLI credential profiles and the shared CLI login. To remove local plugin data as well, close the panel and deliberately delete the `azure-sql-desk` state directory after checking its contents; that also deletes saved views and added credential profiles. Do not delete `~/.azure` to remove this plugin. Azure CLI, DB Studio and their packages are independently managed and remain installed.
@@ -116,6 +116,6 @@ The native QML checks require an Omarchy desktop with QtTest. GitHub CI runs por
 python3 -B scripts/simulate.py
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [release checks](docs/RELEASE.md), and [CHANGELOG.md](CHANGELOG.md). Report ordinary bugs through [GitHub Issues](https://github.com/dimitrijemaric/omarchy-azure-sql/issues); use private reporting for vulnerabilities.
+See [CONTRIBUTING.md](CONTRIBUTING.md), [release checks](docs/RELEASE.md), and [CHANGELOG.md](CHANGELOG.md). Report ordinary bugs through [GitHub Issues](https://github.com/dimitrijemaric/omarchy-azure-databases-desk/issues); use private reporting for vulnerabilities.
 
 Copyright © 2026 Dimitrije Maric. Released under the [MIT license](LICENSE). Omarchy, Azure CLI, Qt/Quickshell and DB Studio retain their own licenses and trademarks. This project is not affiliated with Microsoft or Omarchy.

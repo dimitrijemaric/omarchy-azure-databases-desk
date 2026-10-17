@@ -35,7 +35,7 @@ def main():
         directory = Path(temp)
         (directory / "Commons").symlink_to(shell / "Commons", target_is_directory=True)
         (directory / "Ui").symlink_to(shell / "Ui", target_is_directory=True)
-        (directory / "AzureSql").symlink_to(ROOT, target_is_directory=True)
+        (directory / "AzureDesk").symlink_to(ROOT, target_is_directory=True)
         runtime = directory / "runtime"
         runtime.mkdir(mode=0o700)
         source = ROOT / ("scripts/Preview.qml" if args.preview else "tests/Smoke.qml")

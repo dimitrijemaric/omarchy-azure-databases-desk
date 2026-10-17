@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "dimitrije.azure-sql",
+  "id": "azure-databases-desk",
   "name": "Azure Databases Desk",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "author": "Dimitrije Maric",
   "license": "MIT",
   "description": "Browse Azure SQL with live metrics, month-to-date costs, public-access warnings, saved views and account switching.",

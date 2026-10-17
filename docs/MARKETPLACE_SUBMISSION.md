@@ -1,6 +1,6 @@
 ### Repository URL
 
-https://github.com/dimitrijemaric/omarchy-azure-sql
+https://github.com/dimitrijemaric/omarchy-azure-databases-desk
 
 ### Category
 
@@ -16,7 +16,7 @@ _No response_
 
 ### Maintainer notes
 
-Azure Databases Desk (dimitrije.azure-sql), version 0.7.1, is an Omarchy bar widget for Azure SQL databases. It provides fresh 25-row pages, live metadata and metrics, posted month-to-date costs, public-network warnings, operational details, searchable filters, saved views, and remembered account/directory switching. Cosmos DB, PostgreSQL and Cost Calculator remain disabled.
+Azure Databases Desk (azure-databases-desk), version 0.8.0, is an Omarchy bar widget for Azure SQL databases. It provides fresh 25-row pages, live metadata and metrics, posted month-to-date costs, public-network warnings, operational details, searchable filters, saved views, and remembered account/directory switching. Cosmos DB, PostgreSQL and Cost Calculator remain disabled.
 
 The runtime uses QML, Bash and Python's standard library with Azure CLI. Azure operations are management-plane reads; no SQL queries, restores, failovers or resource writes are performed. Installing the repository runs no setup hooks. The explicit Install Azure CLI action opens a terminal and invokes Omarchy's package manager. Sign-in uses Microsoft's interactive flow. Added identities use separate Azure CLI profiles; credentials remain managed by Azure CLI. Preferences, profile directories, permissions and network behavior are documented in SECURITY.md and the README.
 

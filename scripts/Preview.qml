@@ -2,19 +2,19 @@ import QtQuick
 import QtQuick.Window
 import Quickshell
 import qs.Commons
-import "AzureSql" as AzureSql
+import "AzureDesk" as AzureDesk
 
 ShellRoot {
   property int ticks: 0
   Component.onCompleted: backend.panelOpened()
-  AzureSql.Controller { id: backend; settings: ({demoMode: true}) }
+  AzureDesk.Controller { id: backend; settings: ({demoMode: true}) }
   Window {
     id: window
     visible: true
     width: content.implicitWidth + 56
     height: content.implicitHeight + 56
     Rectangle { anchors.fill: parent; color: Color.background }
-    AzureSql.PanelContent {
+    AzureDesk.PanelContent {
       id: content
       x: 28; y: 28
       width: parent.width - 56

@@ -4,7 +4,7 @@ import QtTest
 import Quickshell
 import Quickshell.Io
 import qs.Commons
-import "AzureSql" as Desk
+import "AzureDesk" as Desk
 
 ShellRoot {
   id: test
